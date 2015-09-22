@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="todoApp">
+<head>
+  <meta charset="UTF-8">
+  <link href='https://fonts.googleapis.com/css?family=Bevan' rel='stylesheet' type='text/css'>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.0/angular.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.0/angular-resource.min.js'></script>
+  <script src="todolist.js"></script>
+  <title>Jukebox</title>
+</head>
+<body ng-controller="ShowTaskController">
+  <section class="task-table">
+    <h1>Tasks</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>notes</th>
+          <th>date created</th>
+          <th>actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- order by created(oldest to newest) -->
+        <tr ng-repeat='task in tasks | filter:task.active="true"'>
+          <td>{{task.name}}</td>
+          <td>{{task.notes}}</td>
+          <!-- format 'January 1, 2015' -->
+          <td>{{task.created | date:'MMMM d, y'}}</td>
+          <td>
+            <button ng-click="editTask($index)" value="edit">edit</button>
+            <!-- <button value="delete" ng-click="deleteTask($index)">delete</button> -->
+
+            <!-- With confirmation(Are you sure?) -->
+            <button value="delete" ng-click="deleteTask($index)" ng-confirm-click="Are you sure?">delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- If there is no task, say 'No data' -->
+  </section>
+
+  <section class="task-form">
+    <div ng-if="isEdit">
+      <h3>Edit Task</h3><button ng-click="addNew()" value="Add new">Add new</button>
+      <!-- Edit -->
+      <form ng-submit="updateTask(); addNew();" ng-controller="UpdateTaskController">
+        <label>Name</label>
+        <input type="text" ng-model="selectedTask.name" ng-maxlength="50" required>
+        <label>Notes</label>
+        <input type="textarea" ng-model="selectedTask.notes" value="{{selectedTask.notes}}" required>
+        <input class="btn" type="submit" value="Save">
+      </form>
+    </div>
+
+    <div ng-if="!isEdit">
+      <h3>New Task</h3>
+      <!-- New -->
+      <form ng-submit="addTask()" ng-controller="AddTaskController">
+        <label>Name</label>
+        <input type="text" ng-model="name" ng-maxlength="50" required>
+        <label>Notes</label>
+        <input type="textarea" ng-model="notes" required>
+        <input class="btn" type="submit" value="Submit">
+      </form>
+  </div>
+
+
+  </section>
+</body>
+</html>
