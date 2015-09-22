@@ -7,24 +7,14 @@ todoListModule.controller("ShowTaskController", function($rootScope, $scope, $re
 	$scope.selectedIndex = 0;
 	$scope.selectedTask;
 
-	// $scope.dataResource = function(task) {
-	// 	console.log(task.id);
-	// 	return $resource('./tasks.php', {
-	// 		id:task.id,
-	// 		name:task.name,
-	// 		notes:task.notes,
-	// 		created:task.created,
-	// 		modified:task.modified
-	// 	}, {
-	// 		update: {method:'PUT'},
-	// 		delete: {method:'DELETE'}
-	// 	});
-	// };
-
 	//GET
-	var taskRes = $resource('./tasks.php');
-	Tasks.push(taskRes);
-	debugger;
+	var taskRes = $resource('./tasks.php', {id: '@id'});
+	var results = taskRes.query(function(){
+		angular.forEach(results, function(result){
+			result.created = Date.parse(result.created);
+			Tasks.push(result);
+		});
+	});
 
 	$scope.editTask = function($index) {
 		$scope.isEdit = true;
@@ -33,10 +23,10 @@ todoListModule.controller("ShowTaskController", function($rootScope, $scope, $re
 	}
 
   $scope.deleteTask = function($index) {
-		Tasks[$index].active = false;
 		//Database
-		var data = $scope.dataResource(Tasks[$index]);
-		data.delete();
+		$scope.tasks[$index].$delete();
+
+		$scope.tasks.splice($index, 1);
 	}
 
 	$scope.addNew = function() {
@@ -63,13 +53,9 @@ todoListModule.controller("UpdateTaskController", function($scope, $resource, Ta
 	$scope.updateTask = function() {
     $scope.selectedTask.modified = new Date();
 		$scope.tasks[$scope.selectedIndex] = angular.copy($scope.selectedTask);
-		$scope.selectedTask.name = '';
-    $scope.selectedTask.notes = '';
 
 		//Database
-		//Database
-		var data = dataResource(Tasks[$index]);
-		data.update();
+		$scope.selectedTask.$save();
 	};
 });
 

@@ -13,7 +13,11 @@
 <body ng-controller="ShowTaskController">
   <section class="task-table">
     <h1>Tasks</h1>
-    <table class="table">
+    <p class="text-center bg-warning" ng-if='!(tasks.length>0)'>
+      <!-- when there is no data to show -->
+      No data
+    </p>
+    <table class="table" ng-if='tasks.length>0'>
       <thead>
         <tr>
           <th>name</th>
@@ -24,15 +28,13 @@
       </thead>
       <tbody>
         <!-- order by created(oldest to newest) -->
-        <tr ng-repeat='task in tasks | filter:task.active="true"'>
+        <tr ng-repeat='task in tasks'>
           <td>{{task.name}}</td>
           <td>{{task.notes}}</td>
           <!-- format 'January 1, 2015' -->
           <td>{{task.created | date:'MMMM d, y'}}</td>
           <td>
             <button ng-click="editTask($index)" value="edit">edit</button>
-            <!-- <button value="delete" ng-click="deleteTask($index)">delete</button> -->
-
             <!-- With confirmation(Are you sure?) -->
             <button value="delete" ng-click="deleteTask($index)" ng-confirm-click="Are you sure?">delete</button>
           </td>
@@ -50,11 +52,10 @@
         <label>Name</label>
         <input type="text" ng-model="selectedTask.name" ng-maxlength="50" required>
         <label>Notes</label>
-        <input type="textarea" ng-model="selectedTask.notes" value="{{selectedTask.notes}}" required>
+        <textarea ng-model="selectedTask.notes" required>{{selectedTask.notes}}</textarea>
         <input class="btn" type="submit" value="Save">
       </form>
     </div>
-
     <div ng-if="!isEdit">
       <h3>New Task</h3>
       <!-- New -->
@@ -62,7 +63,7 @@
         <label>Name</label>
         <input type="text" ng-model="name" ng-maxlength="50" required>
         <label>Notes</label>
-        <input type="textarea" ng-model="notes" required>
+        <textarea ng-model="notes" required></textarea>
         <input class="btn" type="submit" value="Submit">
       </form>
   </div>
